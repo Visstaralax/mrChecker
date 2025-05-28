@@ -1,6 +1,6 @@
 # mr_checker
 
-Analizador de MR con GitLab.
+Interfaz web realizado con flutter con el objetivo de analizar de MR con GitLab.
 
 ## Getting Started
 
