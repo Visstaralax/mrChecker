@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-
 import '../config/config.dart';
-import '../model/field_checker.dart';
-import '../model/mr_result.dart';
 
 class CodeAnalyzer{
 
@@ -72,12 +68,11 @@ class CodeAnalyzer{
   }
 
   String getHistoryID(){
-
     String pattern = "";
 
-    if (Config.getHistoryType() == ConfigParams.US){
+    if (Config.historyIndexSelect == ConfigParams.US){
       pattern = r'\bUS\d+\b';
-    } else if (Config.getHistoryType() == ConfigParams.DE){
+    } else if (Config.historyIndexSelect == ConfigParams.DE){
       pattern = r'\bDE\d+\b';
     }
 
@@ -87,6 +82,47 @@ class CodeAnalyzer{
     final text = textMatch?.group(0);
     if (text != null){
       return text;
+    } else {
+      return "error";
+    }
+  }
+
+  String getVersion(){
+    String pattern = r'\/\d{2,}\.\d{3}\.\d+-\d{10}';
+
+    final regex = RegExp(pattern);
+
+    final textMatch = regex.firstMatch(code);
+    final text = textMatch?.group(0);
+
+    if (text != null){
+      return text.replaceAll("/", "");
+    } else {
+      return "error";
+    }
+  }
+
+  String getSourceBranch(){
+    final regex = RegExp(r'data-source-branch="([^"]+)"');
+
+    final textMatch = regex.firstMatch(code);
+    final text = textMatch?.group(0);
+
+    if (text != null){
+      return text.replaceAll('data-source-branch=', "");
+    } else {
+      return "error";
+    }
+  }
+
+  String getTargetBranch(){
+    final regex = RegExp(r'data-target-branch="([^"]+)"');
+
+    final textMatch = regex.firstMatch(code);
+    final text = textMatch?.group(0);
+
+    if (text != null){
+      return text.replaceAll('data-target-branch=', "");
     } else {
       return "error";
     }

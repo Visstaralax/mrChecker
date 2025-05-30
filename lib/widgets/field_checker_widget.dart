@@ -6,26 +6,23 @@ import 'package:mr_checker/model/process_value_return.dart';
 import 'package:mr_checker/processing/provider/process_notifier.dart';
 
 import '../processing/provider/code_notifier.dart';
-import 'mr_result.dart';
+import '../model/mr_result.dart';
 
-class FieldChecker extends ConsumerStatefulWidget {
+class FieldCheckerWidget extends ConsumerStatefulWidget {
   final String name;
   final String keyName;
   final bool isSmall;
-  const FieldChecker({super.key, required this.name, required this.keyName, required this.isSmall});
+  const FieldCheckerWidget({super.key, required this.name, required this.keyName, required this.isSmall});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _FieldCheckerState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _FieldCheckerWidgetState();
 }
 
-class _FieldCheckerState extends ConsumerState<FieldChecker> {
+class _FieldCheckerWidgetState extends ConsumerState<FieldCheckerWidget> {
   String name = "";
   bool isInit = true;
   bool isCorrect = true;
   bool isConfirmedByUser = false;
-  final defaultColor = Colors.black;
-  final errorColor = Colors.redAccent;
-  final confirmedColor = Colors.greenAccent.shade700;
 
   @override
   void initState() {
@@ -35,44 +32,27 @@ class _FieldCheckerState extends ConsumerState<FieldChecker> {
 
   @override
   Widget build(BuildContext context) {
-
-    ref.listen<Map<String, ProcessValueReturn>>(MrResultNotifier.mrResultProvider, (prev, next) {
-      final value = next[widget.keyName]?.returnValue ?? "";
-
-      setState(() {
-        isCorrect = !(value == "error");
-      });
-    });
-
-    ref.listen<ButtonWatcher>(ProcessNotifier.processProvider, (prev, next) {
-      if (next.reset || next.process){
-        isInit = true;
-        isCorrect = false;
-        isConfirmedByUser = false;
-    }});
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SizedBox(
-          width: widget.isSmall ? constraints.maxWidth / 4 : double.infinity,
-          //width: constraints.maxWidth,
-          child: getComponent(),
-        );
-      },
+    return SizedBox(
+      height: 125,
+      width: 350,
+      child: Scaffold(
+        body: getComponent()
+      ),
     );
   }
 
-  Color getColor() {
+  void setColor() {
     if (isInit){
-      return defaultColor;
+      Config.currentColor = Config.defaultColor;
     } else if (isCorrect && isConfirmedByUser) {
-      return confirmedColor;
+      Config.currentColor = Config.confirmedColor;
     } else if (!isCorrect && isConfirmedByUser) {
-      return errorColor;
+      Config.currentColor = Config.errorColor;
     } else if (!isCorrect) {
-      return errorColor;
+      print ("error color");
+      Config.currentColor = Config.errorColor;
     } else {
-      return defaultColor;
+      Config.currentColor = Config.defaultColor;
     }
   }
 
@@ -84,11 +64,21 @@ class _FieldCheckerState extends ConsumerState<FieldChecker> {
     }
   }
 
+  void processed(){
+    setState(() {
+      isInit = false;
+      isCorrect = false;
+      isConfirmedByUser = false;
+      setColor();
+    });
+  }
+
   void approved(){
     setState(() {
       isInit = false;
       isCorrect = true;
       isConfirmedByUser = true;
+      setColor();
     });
   }
 
@@ -102,10 +92,27 @@ class _FieldCheckerState extends ConsumerState<FieldChecker> {
 
   Widget getComponent(){
 
-    final state = ref.watch(MrResultNotifier.mrResultProvider);
-    final value = state[widget.keyName]?.returnValue ?? "";
+    ref.listen<Map<String, ProcessValueReturn>>(MrResultNotifier.valueReturnProvider, (prev, next) {
+      final value = next[widget.keyName]?.returnValue ?? "";
+      setState(() {
+        isInit = false;
+        isCorrect = !(value == "error");
+        print ("${widget.keyName} isCorrect $isCorrect");
+        setColor();
+      });
+    });
 
-    print ("title $value");
+    ref.listen<ButtonWatcher>(ProcessNotifier.processProvider, (prev, next) {
+      setState(() {
+        isInit = true;
+        isCorrect = false;
+        isConfirmedByUser = false;
+        setColor();
+      });
+    });
+
+    final state = ref.watch(MrResultNotifier.valueReturnProvider);
+    final value = state[widget.keyName]?.returnValue ?? "";
 
     return Container(
       margin: EdgeInsets.all(20),
@@ -118,10 +125,10 @@ class _FieldCheckerState extends ConsumerState<FieldChecker> {
         ),
       ),
       child: Row(children: [
-        Expanded(flex: 1, child: Icon(getIcons(), color: getColor())),
+        Expanded(flex: 1, child: Icon(getIcons(), color: Config.currentColor)),
         SizedBox(width: 20),
         Expanded(flex: 4, child: Text(name, style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 15, child: Text(value, style: TextStyle(color: getColor()))),
+        Expanded(flex: 15, child: Text(value, style: TextStyle(color: Config.currentColor))),
         Expanded(flex: 2, child: ElevatedButton(onPressed: (){approved();}, style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.greenAccent)), child: null,)),
         SizedBox(width: 10),
         Expanded(flex: 2, child: ElevatedButton(onPressed: (){rejected();}, style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.redAccent)), child: null,)),

@@ -1,6 +1,13 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Config {
+
+  //colors
+  static final defaultColor = Colors.black;
+  static final errorColor = Colors.redAccent;
+  static final confirmedColor = Colors.greenAccent.shade700;
+  static var currentColor = Colors.black;
 
   //here add MR type
   static const List<String> typeOptions = [
@@ -19,30 +26,45 @@ class Config {
   //here add modul type
   static const List<String> modulType = [ConfigParams.BF, ConfigParams.MCA];
   //here add is user is assigned type
-  static const List<String> userAssignedType = [ConfigParams.userAssigned, ConfigParams.userNotAssigned];
+  static const List<String> userAssignedType = [ConfigParams.value_yes, ConfigParams.value_not];
+  //here add confirm reviewed label
+  static const List<String> labelsType = [ConfigParams.value_yes, ConfigParams.value_not];
+  //here add confirm milestone
+  static const List<String> milestoneType = [ConfigParams.value_yes, ConfigParams.value_not];
+  //here add confirm correct size
+  static const List<String> confirmSizeType = [ConfigParams.value_yes, ConfigParams.value_not];
+  //here add confirm master branch
+  static const List<String> masterBranchType = [ConfigParams.value_yes, ConfigParams.value_not];
 
   //search matches
-  static const enterprisesMatchesList = ['OT', 'VASS', 'TNF'];
-  static const modulesMatchesList = ['MCAMITOFBRIDGE'];
-  static const osMatchesList = ['Android', 'iOS'];
+  static const enterprisesMatchesList = ['OT', 'VASS', 'TNF', 'NTTDATA', 'NNT DATA'];
+  static const modulesMatchesList = ['MCAMITOFBRIDGE','OFBRIDGE','TARJET'];
+  static const osMatchesList = ['Android', 'iOS','And'];
   static const historyMatchesList = ["US", "DE"];
 
   // type selected
-  static var typeOptionIndex = 0;
-  static var mrTypeIndex = 0;
-  static var modulTypeIndex = 0;
-  static var historyIndex = 0;
-  static var osListIndex = 0;
-  static var userAssignedTypeIndex = 0;
+  static String? typeOptionSelect = MrType.normal;
+  static String? modulTypeIndex = ConfigParams.BF;
+  static String? historyIndexSelect = ConfigParams.US;
+  static String? osListIndex = ConfigParams.android;
 
-  static String getHistoryType(){
-    return historyType[historyIndex];
-  }
+  // prevalidation
+  static String? userAssignedTypeIndex = ConfigParams.value_not;
+  static String? labelsIndex = ConfigParams.value_not;
+  static String? milestoneIndex = ConfigParams.value_not;
+  static String? confirmSizeIndex = ConfigParams.value_not;
+  static String? masterBranchIndex = ConfigParams.value_not;
 
   static Map<String, Key> keysMap = {
     FieldNames.title: Key(FieldNames.title),
+    FieldNames.mi: Key(FieldNames.mi),
+    FieldNames.enterprise: Key(FieldNames.enterprise),
+    FieldNames.modul: Key(FieldNames.modul),
+    FieldNames.os: Key(FieldNames.os),
+    FieldNames.version: Key(FieldNames.version),
+    FieldNames.sourceBranch: Key(FieldNames.sourceBranch),
+    FieldNames.targetBranch: Key(FieldNames.targetBranch)
   };
-
 }
 
 class MrType{
@@ -61,8 +83,8 @@ class ConfigParams{
   static const iOS = "iOS";
   static const BF = "BF";
   static const MCA = "MCA";
-  static const userAssigned = "Si";
-  static const userNotAssigned = "No";
+  static const value_yes = "Si";
+  static const value_not = "No";
 }
 
 class FieldNames{
@@ -73,4 +95,7 @@ class FieldNames{
   static const modul = "modul";
   static const sprint = "sprint";
   static const idHistory = "idHistory";
+  static const version = "version";
+  static const sourceBranch = "source_branch";
+  static const targetBranch = "target_branch";
 }
