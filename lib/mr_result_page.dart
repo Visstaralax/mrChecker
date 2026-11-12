@@ -18,8 +18,7 @@ class _MrResultPageState extends ConsumerState<MrResultPage> {
 
   @override
   void initState() {
-    baseCodeController.text = '<title>OT MI82 - MCAMITOFBRIDGE - DE117791: [Android][OFBridge] Adaptación para el envío correcto de datos tipo array como variables de etiquetado (!9843) · Merge requests · cbk / mobilitat / apps / cliente / APPCBK / APPCBK_android / Commons_APPCBK · GitLab</title> <a href="https://artifacts.cloud.caixabank.com/artifactory/arq-open-mobile-maven-public/adam/android/bf/APPCBK_OFBRIDGE/82.209.2-2025052301/"';
-    //baseCodeController.text = '82.209.2-2025052301/"';
+    baseCodeController.text = 'TITLE';
     super.initState();
   }
 
